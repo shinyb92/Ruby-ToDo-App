@@ -1,3 +1,7 @@
+
+#I extended the Array class here with a new method that 
+#combines functionality of .delete(item ) and insert methods 
+#that arrays already have, neatly packaged into one. 
 class Array 
   def replace_with original_item, index, new_item 
     self.delete(original_item)
