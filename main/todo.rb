@@ -1,7 +1,4 @@
 
-#I extended the Array class here with a new method that 
-#combines functionality of .delete(item ) and insert methods 
-#that arrays already have, neatly packaged into one. 
 class Array 
   def replace_with original_item, index, new_item 
     self.delete(original_item)
@@ -24,6 +21,15 @@ class List
   
   def tasks
     @all_tasks  
+  end 
+  #little helper method that will be used to check if an element 
+  #exists in the current instance of the @all_tasks array. 
+  def element_exists?(list_number)  
+    if @all_tasks[list_number].nil? 
+      false
+    else 
+      true
+    end  
   end 
   
   
@@ -65,8 +71,8 @@ class List
    @all_tasks.replace_with(@all_tasks[task_no], task_no, @complete)  
 end
 
-def save 
-  list_file = File.open('todo_list.txt', 'w')
+def save(filename) 
+  list_file = File.open(filename, 'w')
   @all_tasks.each do |task| 
     list_file.puts task.description
   end
@@ -80,7 +86,7 @@ class Task
 end 
 
 
-my_list = List.new('another list')
+my_list = List.new('Your list')
 
 puts 'Hi! Welcome to your friendly neighborhood Todo List.' 
 puts 'Enter any blank text file name, and then start adding to the list.'
@@ -90,9 +96,34 @@ puts 'For a full list of commands type "commands".'
 puts 'Please enter a file name:' 
 
 filename = gets.chomp
-File.open(filename).each do |line| 
+if File.exists?(filename) == false 
+  puts 'I didn\'t find a file matching that description. /n Would you like to create a new file with that name now? (yes/no)' 
+  answer = gets.chomp.downcase  
+  if answer == 'yes' && filename.include?('.txt') 
+    File.new(filename, "w") 
+    puts 'A new ToDo list was created as ' + filename + ' at ' + Time.new.to_s
+    File.open(filename).each do |line| 
   my_list.add_task(Task.new(line))
-end
+  end 
+  elsif answer == 'yes' && filename.include?('.txt') == false 
+    File.new(filename + '.txt', "w")
+    filename = filename + '.txt'
+    puts 'A new ToDo list was created as ' + filename + ' at ' + Time.new.to_s
+      File.open(filename).each do |line| 
+  my_list.add_task(Task.new(line))
+  end 
+  elsif answer == 'no' 
+    puts 'Alright, run the program again with an existing filename, or create your own!'
+    exit  
+  else 
+    puts 'Please enter "yes" or "no"' 
+  end 
+else
+  File.open(filename).each do |line| 
+  my_list.add_task(Task.new(line))
+  end 
+end   
+
 
 running = true 
 
@@ -107,17 +138,26 @@ when 'add task'
   puts 'What\'s the task?' 
   new_task = gets.chomp
   my_list.add_task(Task.new(new_task))
-  my_list.save
+  my_list.save(filename)
 when 'delete task'
   puts 'Which task would you like to delete? Enter it\'s number on the list:' 
   task_to_delete = (gets.chomp.to_i - 1) 
   my_list.remove_task(task_to_delete)
-  my_list.save 
+  my_list.save(filename) 
 when 'task complete' 
   puts 'Which task is done? Enter it\'s number on the list:' 
   task_no= (gets.chomp.to_i - 1)
+    #The -1 above here is because the list's actual index number is always
+  # one behind how lists start. Most people start lists 
+  # with 1. and no 0. as most arrays are indexed in programming languages
+  
+  if my_list.element_exists?(task_no)
+    puts 'That item isn\'t on the list! Please enter an existing task number.'
+  else 
   my_list.completed_task(task_no)
-  my_list.save 
+    my_list.save(filename)
+  end 
+
 
   
 when 'show tasks'
@@ -133,6 +173,7 @@ when 'delete all'
   answer = gets.chomp 
     if answer == 'yes' 
       my_list.delete_all 
+      my_list.save(filename)
       puts 'All tasks were successfully deleted.'
     elsif answer == 'no' 
       puts 'No items were deleted! Whew!' 
@@ -148,7 +189,7 @@ when 'commands'
   puts " 'Delete all'   : Deletes ALL of your tasks. " 
   puts " 'Exit'         : Exits your current session. "  
 when 'exit' 
-  my_list.save 
+  my_list.save(filename) 
   running = false 
 else 
   puts 'I couldn\'t understand you. If you\'re trying to exit, type exit!'
