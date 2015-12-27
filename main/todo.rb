@@ -86,7 +86,6 @@ puts 'For a full list of commands type "commands".'
 puts 'Please enter a file name:' 
 
 filename = gets.chomp
-
 File.open(filename).each do |line| 
   my_list.add_task(Task.new(line))
 end
