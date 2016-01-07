@@ -5,8 +5,7 @@
 class Array 
   def replace_with original_item, index, new_item 
     self.delete(original_item)
-    self.insert(index, new_item)
-    self 
+    self.insert(index, new_item) 
   end
 end 
  
