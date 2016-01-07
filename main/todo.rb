@@ -38,25 +38,7 @@ class List
     @all_tasks.clear  
   end 
   
-  #Having a hard time implementing this feature. 
-  #The problem, even with my handmade method for arrays above
-  #is that I want to write to the task and then add it back 
-  # to the all_tasks array 
-  #I'm getting an error, basically with the final saving method. 
-  #Basically it's getting converted into a string for some reason 
-  #and it doesn't have a method for description in the block. 
-  #it's weird. 
-  
-  #UPDATE: So the feature is implemented. My problem was that I didn't create 
-  # a task object, with a description. 
-  #my new problem is that for some reason, when it adds 'Complete' 
-  #it adds it to a new line. I'm not sure how to remove this new line. 
-  # and just have it change the description 
-  
-  #Yet another update! So it looks like for some reason, using single quotes
-  # and then adding to them, puts a newline. 
-  #You also can't use newlines at all if there aren't "" double quotes
-  #I fixed this accordingly, making the object take double quotes!
+
   def completed_task task_no 
    @complete = Task.new(" ")
    @complete.description = (@all_tasks[task_no].description + " --Complete!")
